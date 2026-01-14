@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Iglesia CCR · En vivo{% endblock %}</title>
+
+    <!-- Favicon (opcional) -->
+    <link rel="icon" type="image/png" href="{% static 'core/img/logo.png' %}">
+
+    <!-- CSS base -->
+    <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+
+    <!-- JS base -->
+    <script defer src="{% static 'core/js/base.js' %}"></script>
+</head>
+<body>
+    <!-- Fondo tipo collage: se aplica por CSS usando fondo.png -->
+    <div class="background" aria-hidden="true"></div>
+    <div class="overlay" aria-hidden="true"></div>
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="brand">
+            <img src="{% static 'core/img/logo.png' %}" alt="Logo Iglesia CCR" class="brand-logo">
+            <div class="brand-text">
+                <h1 class="site-title">Iglesia CCR</h1>
+                <p class="site-subtitle">Reuniones y transmisiones en vivo</p>
+            </div>
+        </div>
+
+        <nav class="site-nav" aria-label="Principal">
+            <ul>
+                <li><a href="#en-vivo">En vivo</a></li>
+                <li><a href="#proxima-reunion">Próxima reunión</a></li>
+                <li><a href="#informacion">Información</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main -->
+    <main class="site-main">
+        <!-- Sección en vivo -->
+        <section id="en-vivo" class="live-section">
+            <div class="live-header">
+                <span class="live-badge" role="status" aria-live="polite">OFF AIR</span>
+                <h2 class="section-title">Transmisión en vivo</h2>
+            </div>
+
+            <!-- Contenedor del player -->
+            <div class="player-card">
+                <!--
+                    El front recibirá RTMP en Nginx y publicará HLS/DASH.
+                    Usa data-stream-url para inyectar el manifest (e.g. /hls/stream.m3u8)
+                    y data-poster para el placeholder del video.
+                -->
+                <div
+                    id="player"
+                    class="player"
+                    data-stream-url="/hls/stream.m3u8"
+                    data-poster="{% static 'core/img/fondo.png' %}"
+                    aria-label="Reproductor de video en vivo">
+                    <video
+                        id="live-video"
+                        class="video"
+                        playsinline
+                        controls
+                        preload="metadata"
+                        poster="{% static 'core/img/fondo.png' %}">
+                        <!-- Fallback si el navegador soporta HLS nativo -->
+                        <source src="/hls/stream.m3u8" type="application/vnd.apple.mpegurl">
+                        Tu navegador no soporta reproducción HLS directa.
+                    </video>
+                </div>
+
+                <div class="player-controls">
+                    <button class="btn primary" id="play-btn" type="button">Reproducir</button>
+                    <button class="btn" id="mute-btn" type="button" aria-pressed="false">Silenciar</button>
+                    <button class="btn" id="fullscreen-btn" type="button">Pantalla completa</button>
+                    <div class="status">
+                        <span class="dot" aria-hidden="true"></span>
+                        <span class="text" id="stream-status">Preparando transmisión…</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensajes del sistema / alertas -->
+            <div class="alerts" role="region" aria-live="polite" aria-atomic="true">
+                <!-- JS insertará mensajes aquí -->
+            </div>
+        </section>
+
+        <!-- Próxima reunión / horario -->
+        <section id="proxima-reunion" class="schedule-section">
+            <h2 class="section-title">Próxima reunión</h2>
+            <div class="schedule-card">
+                <div class="schedule-info">
+                    <p class="schedule-day">Domingo</p>
+                    <p class="schedule-time">10:00 (ART)</p>
+                </div>
+                <div class="schedule-cta">
+                    <a class="btn primary" href="#en-vivo">Ir al en vivo</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Información -->
+        <section id="informacion" class="info-section">
+            <h2 class="section-title">Sobre la Iglesia</h2>
+            <p class="info-text">
+                Bienvenido a la Iglesia CCR. Compartimos nuestras reuniones y mensaje a través de
+                transmisiones en vivo para que puedas acompañarnos desde donde estés.
+            </p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p>&copy; {{ now|date:"Y" }} Iglesia CCR. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>

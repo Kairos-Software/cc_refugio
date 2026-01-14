@@ -1,0 +1,200 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #fff;
+    line-height: 1.6;
+    background-color: #000;
+    position: relative;
+    min-height: 100vh;
+}
+
+/* Fondo collage */
+.background {
+    background: url("../img/fondo.png") no-repeat center center fixed;
+    background-size: cover;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -2;
+}
+
+.overlay {
+    background: rgba(0,0,0,0.6);
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+}
+
+/* Header */
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: rgba(0,0,0,0.7);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+}
+
+.brand-logo {
+    height: 60px;
+    margin-right: 1rem;
+}
+
+.site-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.site-subtitle {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.site-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+.site-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.site-nav a:hover {
+    color: #ffd700;
+}
+
+/* Sección en vivo */
+.live-section {
+    padding: 2rem;
+    text-align: center;
+}
+
+.live-header {
+    margin-bottom: 1rem;
+}
+
+.live-badge {
+    display: inline-block;
+    background: red;
+    color: #fff;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+}
+
+.player-card {
+    background: rgba(0,0,0,0.7);
+    padding: 1rem;
+    border-radius: 8px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.video {
+    width: 100%;
+    border-radius: 8px;
+    background: #000;
+}
+
+.player-controls {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.btn {
+    background: #333;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background: #555;
+}
+
+.btn.primary {
+    background: #ffd700;
+    color: #000;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status .dot {
+    width: 10px;
+    height: 10px;
+    background: red;
+    border-radius: 50%;
+}
+
+/* Próxima reunión */
+.schedule-section {
+    padding: 2rem;
+    text-align: center;
+}
+
+.schedule-card {
+    background: rgba(0,0,0,0.7);
+    padding: 1rem;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.schedule-day {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.schedule-time {
+    font-size: 1rem;
+    color: #ccc;
+}
+
+/* Información */
+.info-section {
+    padding: 2rem;
+    text-align: center;
+}
+
+.info-text {
+    max-width: 600px;
+    margin: 0 auto;
+    color: #ddd;
+}
+
+/* Footer */
+.site-footer {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(0,0,0,0.7);
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    font-size: 0.8rem;
+    color: #ccc;
+}
