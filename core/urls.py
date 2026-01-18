@@ -1,6 +1,9 @@
 from django.urls import path
-from . import views
+from .views import home
+from core import views
 
 urlpatterns = [
-    path('', views.home, name='home'),  # ejemplo: vista principal
+    path("", home, name="home"),
+    path("chat/enviar/", views.enviar_mensaje, name="chat_enviar"),
+    path("chat/obtener/", views.obtener_mensajes, name="chat_obtener"),
 ]

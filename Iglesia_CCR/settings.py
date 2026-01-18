@@ -1,15 +1,21 @@
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ⚠️ En producción deberías mover esta clave a variables de entorno
-SECRET_KEY = 'django-insecure-!8t*2a(2$9k9l&c5)9wbyk5jb&8zf@o7dhla&mznb(=yp3grtc'
+# Cargar selector
+load_dotenv(BASE_DIR / ".env")
+ENV = os.getenv("ENV", "local")
 
-# Producción: DEBUG debe estar en False
-DEBUG = False
+# Cargar el archivo correspondiente
+env_file = BASE_DIR / f".env.{ENV}"
+load_dotenv(env_file)
 
-# Dominio y/o IP pública de tu VPS
-ALLOWED_HOSTS = ["centrocristianorefugio.grupokairosarg.com", "tu.ip.publica"]
+# Seguridad
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "insecure-default")
+DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
 
 # Aplicaciones instaladas
 INSTALLED_APPS = [
@@ -52,15 +58,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "Iglesia_CCR.wsgi.application"
 
-# Base de datos PostgreSQL
+# Base de datos
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "iglesia_ccr",  # nombre de la base, la crearás en la VPS
-        "USER": "postgres",
-        "PASSWORD": "Grupokairos25+",
-        "HOST": "localhost",  # o la IP del servidor PostgreSQL
-        "PORT": "5432",
+        "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.getenv("DB_NAME", "streaming2"),
+        "USER": os.getenv("DB_USER", "postgres"),
+        "PASSWORD": os.getenv("DB_PASSWORD", ""),
+        "HOST": os.getenv("DB_HOST", "localhost"),
+        "PORT": os.getenv("DB_PORT", "5432"),
     }
 }
 
@@ -91,3 +97,10 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Usuario de iglesia
+IGLESIA_USER = os.getenv("IGLESIA_USER", "ccrefugio")
+
+# Configuración HLS
+HLS_BASE_URL = os.getenv("HLS_BASE_URL")
+HLS_PROGRAM_PATH = os.getenv("HLS_PROGRAM_PATH")

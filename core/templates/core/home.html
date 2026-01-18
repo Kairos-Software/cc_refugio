@@ -1,0 +1,207 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Transmisión en Vivo - Centro Cristiano Refugio{% endblock %}
+
+{% block content %}
+
+<!-- Banner de Bienvenida -->
+<div class="welcome-banner">
+    <h2 class="welcome-title">¡Bienvenidos a nuestra Transmisión en Vivo! 🙏</h2>
+    <p class="welcome-text">
+        Nos alegra que estés aquí. Únete a nuestra comunidad en adoración y alabanza. 
+        Dios tiene algo especial preparado para ti hoy. Prepara tu corazón para recibir su palabra.
+    </p>
+    <div class="welcome-verse">
+        "Alabad a Jehová, porque él es bueno; Porque para siempre es su misericordia."
+        <br><strong>- Salmos 136:1</strong>
+    </div>
+</div>
+
+<!-- Sección Principal: Video + Chat -->
+<section
+    class="live-section"
+    id="streamContainer"
+    data-on-air="{{ on_air|yesno:'true,false' }}"
+    data-hls-url="{{ hls_url }}"
+>
+
+    <!-- Player de Video -->
+    <div class="player-card">
+        <div class="status {% if on_air %}on-air{% endif %}">
+            <span class="dot {% if on_air %}on-air{% endif %}"></span>
+            <span class="status-text {% if on_air %}on-air{% endif %}">
+                {% if on_air %}
+                    En Vivo Ahora
+                {% else %}
+                    Fuera de Línea
+                {% endif %}
+            </span>
+        </div>
+
+        <video
+            id="videoPlayer"
+            class="video"
+            controls
+            playsinline
+            preload="none"
+            poster="{% static 'core/img/fondo.png' %}"
+        >
+            Tu navegador no soporta video HTML5.
+        </video>
+    </div>
+
+    <!-- Chat en Vivo -->
+    <div class="chat-section">
+        <div class="chat-header">
+            Chat en Vivo
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message system">
+                🙏 Bienvenido a la transmisión en vivo de Centro Cristiano Refugio
+            </div>
+            <div class="message system">
+                💬 Comparte tus peticiones de oración y testimonios
+            </div>
+            <div class="message system">
+                ✨ Que la paz de Dios llene tu corazón
+            </div>
+            <div class="message system">
+                📖 Prepara tu Biblia y toma notas del mensaje
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <input type="text" placeholder="Comparte tu mensaje de fe..." disabled>
+            <button class="btn" disabled>Enviar</button>
+        </div>
+    </div>
+
+</section>
+
+<!-- Modal para pedir nombre -->
+<div id="modalNombre" class="modal oculto">
+    <div class="modal-contenido">
+        <h3>Ingresa tu nombre para participar en el chat</h3>
+        <input type="text" id="nombreUsuarioInput" placeholder="Tu nombre">
+        <button id="guardarNombreBtn">Guardar</button>
+    </div>
+</div>
+
+<!-- Información de la Iglesia -->
+<div class="info-grid">
+    <div class="info-card">
+        <span class="info-icon">⛪</span>
+        <h3>Nuestra Misión</h3>
+        <p>
+            Ser un <span class="highlight">refugio espiritual</span> donde cada persona encuentre 
+            el amor de Cristo, crezca en fe y descubra su propósito divino en comunidad.
+        </p>
+    </div>
+
+    <div class="info-card">
+        <span class="info-icon">🙌</span>
+        <h3>Adoración en Vivo</h3>
+        <p>
+            Experimenta la <span class="highlight">presencia de Dios</span> a través de nuestra 
+            alabanza y adoración. Cada servicio es una oportunidad para encontrarte con Él.
+        </p>
+    </div>
+
+    <div class="info-card">
+        <span class="info-icon">📚</span>
+        <h3>Palabra de Vida</h3>
+        <p>
+            Mensajes transformadores basados en la <span class="highlight">Palabra de Dios</span>, 
+            aplicables a tu vida diaria. Crece espiritualmente con cada enseñanza.
+        </p>
+    </div>
+
+    <div class="info-card">
+        <span class="info-icon">❤️</span>
+        <h3>Comunidad Unida</h3>
+        <p>
+            Únete a una familia que se <span class="highlight">ama y apoya mutuamente</span>. 
+            Aquí encontrarás hermanos que caminarán contigo en tu jornada de fe.
+        </p>
+    </div>
+</div>
+
+<!-- Horarios de Servicios -->
+<section class="schedule-section" id="horarios">
+    <h2 class="schedule-title">📅 Horarios de Servicios</h2>
+    
+    <div class="schedule-grid">
+        <div class="schedule-item">
+            <div class="schedule-day">🌅 Domingo</div>
+            <div class="schedule-time">⏰ 9:00 AM - 11:00 AM</div>
+            <div class="schedule-event">Servicio Dominical Principal</div>
+        </div>
+
+        <div class="schedule-item">
+            <div class="schedule-day">🌅 Domingo</div>
+            <div class="schedule-time">⏰ 6:00 PM - 8:00 PM</div>
+            <div class="schedule-event">Servicio Vespertino</div>
+        </div>
+
+        <div class="schedule-item">
+            <div class="schedule-day">🌙 Miércoles</div>
+            <div class="schedule-time">⏰ 7:00 PM - 9:00 PM</div>
+            <div class="schedule-event">Estudio Bíblico y Oración</div>
+        </div>
+
+        <div class="schedule-item">
+            <div class="schedule-day">🌙 Viernes</div>
+            <div class="schedule-time">⏰ 7:30 PM - 9:30 PM</div>
+            <div class="schedule-event">Noche de Jóvenes</div>
+        </div>
+
+        <div class="schedule-item">
+            <div class="schedule-day">🌄 Sábado</div>
+            <div class="schedule-time">⏰ 4:00 PM - 6:00 PM</div>
+            <div class="schedule-event">Escuela Dominical Infantil</div>
+        </div>
+
+        <div class="schedule-item">
+            <div class="schedule-day">🔥 Primer Viernes</div>
+            <div class="schedule-time">⏰ 11:00 PM - 2:00 AM</div>
+            <div class="schedule-event">Vigilia de Oración y Ayuno</div>
+        </div>
+    </div>
+</section>
+
+<!-- Información Adicional -->
+<div class="info-grid">
+    <div class="info-card">
+        <span class="info-icon">💒</span>
+        <h3>Primera Visita</h3>
+        <p>
+            ¿Es tu primera vez? <span class="highlight">¡Te damos la bienvenida!</span> 
+            Ven como estás, aquí encontrarás un ambiente cálido y familiar. 
+            Nos encantaría conocerte personalmente.
+        </p>
+    </div>
+
+    <div class="info-card">
+        <span class="info-icon">🎵</span>
+        <h3>Ministerio de Alabanza</h3>
+        <p>
+            Únete a nuestro equipo de <span class="highlight">adoración</span>. 
+            Si tienes el don del canto o tocas algún instrumento, queremos que 
+            seas parte de este ministerio que glorifica a Dios.
+        </p>
+    </div>
+
+    <div class="info-card">
+        <span class="info-icon">🤝</span>
+        <h3>Grupos de Vida</h3>
+        <p>
+            Conecta más profundamente a través de nuestros <span class="highlight">grupos celulares</span>. 
+            Estudia la Palabra, comparte experiencias y crece junto a otros creyentes 
+            en tu zona.
+        </p>
+    </div>
+</div>
+
+{% endblock %}
