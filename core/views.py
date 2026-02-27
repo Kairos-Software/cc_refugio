@@ -5,22 +5,36 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
-def home(request):
-    usuario = settings.IGLESIA_USER
-
-    stream = CanalTransmision.objects.filter(
-        usuario__username=usuario
+def _get_stream():
+    return CanalTransmision.objects.filter(
+        usuario__username=settings.IGLESIA_USER
     ).first()
 
-    hls_url = f"{settings.HLS_BASE_URL}/{settings.HLS_PROGRAM_PATH}/{usuario}.m3u8"
+
+def home(request):
+    stream = _get_stream()
+    hls_url = f"{settings.HLS_BASE_URL}/{settings.HLS_PROGRAM_PATH}/{settings.IGLESIA_USER}.m3u8"
 
     context = {
         "stream": stream,
         "on_air": stream.en_vivo if stream else False,
         "hls_url": hls_url,
+        "modo_radio": stream.modo_radio if stream else False,
     }
 
     return render(request, "core/home.html", context)
+
+
+def estado_stream(request):
+    """
+    Endpoint de polling para el reproductor público.
+    Devuelve el estado actual del canal sin recargar la página.
+    """
+    stream = _get_stream()
+    return JsonResponse({
+        "on_air": stream.en_vivo if stream else False,
+        "modo_radio": stream.modo_radio if stream else False,
+    })
 
 
 # Memoria temporal (se borra al terminar transmisión)
@@ -30,10 +44,8 @@ mensajes_chat = []
 @csrf_exempt
 def enviar_mensaje(request):
     global mensajes_chat
-    usuario_panel = settings.IGLESIA_USER
-    stream = CanalTransmision.objects.filter(usuario__username=usuario_panel).first()
+    stream = _get_stream()
 
-    # Si no hay transmisión activa, bloquear y limpiar
     if not stream or not stream.en_vivo:
         mensajes_chat = []
         return JsonResponse({"activo": False, "mensajes": []})
@@ -49,8 +61,7 @@ def enviar_mensaje(request):
 
 def obtener_mensajes(request):
     global mensajes_chat
-    usuario_panel = settings.IGLESIA_USER
-    stream = CanalTransmision.objects.filter(usuario__username=usuario_panel).first()
+    stream = _get_stream()
 
     if not stream or not stream.en_vivo:
         mensajes_chat = []

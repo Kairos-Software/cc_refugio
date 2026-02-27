@@ -7,11 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    // ==============================
-    // LEER DATOS DESDE HTML
-    // ==============================
     const enVivo = contenedor.dataset.onAir === "true";
     const urlHls = contenedor.dataset.hlsUrl;
+    const modoRadioInicial = contenedor.dataset.modoRadio === "true";
 
     if (!urlHls) {
         console.warn("⛔ No hay URL HLS");
@@ -19,14 +17,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==============================
-    // HLS PLAYER
+    // DETECTAR ORIENTACIÓN DEL VIDEO
     // ==============================
-    if (enVivo) {
-        console.log("▶️ Intentando reproducir HLS:", urlHls);
-    } else {
-        console.log("ℹ️ El canal está OFFLINE");
+    function detectarOrientacionVideo() {
+        const videoWidth = video.videoWidth;
+        const videoHeight = video.videoHeight;
+        if (videoWidth && videoHeight) {
+            const esVertical = videoHeight > videoWidth;
+            if (esVertical) {
+                video.classList.add('video-vertical');
+                video.classList.remove('video-horizontal');
+            } else {
+                video.classList.add('video-horizontal');
+                video.classList.remove('video-vertical');
+            }
+        }
     }
 
+    video.addEventListener('loadedmetadata', detectarOrientacionVideo);
+    video.addEventListener('resize', detectarOrientacionVideo);
+
+    // ==============================
+    // HLS PLAYER
+    // ==============================
     let hls = null;
 
     function iniciarHls() {
@@ -48,30 +61,21 @@ document.addEventListener("DOMContentLoaded", () => {
             hls.attachMedia(video);
 
             hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                console.log("✅ Manifest cargado");
                 video.play().catch(err => {
                     console.warn("⚠️ Autoplay bloqueado:", err);
                 });
             });
 
             hls.on(Hls.Events.ERROR, (event, data) => {
-                console.error("❌ Error HLS:", data);
-
                 if (!data.fatal) return;
-
                 switch (data.type) {
                     case Hls.ErrorTypes.NETWORK_ERROR:
-                        console.warn("🌐 Error de red, reintentando...");
                         hls.startLoad();
                         break;
-
                     case Hls.ErrorTypes.MEDIA_ERROR:
-                        console.warn("🎞️ Error de media, recuperando...");
                         hls.recoverMediaError();
                         break;
-
                     default:
-                        console.error("💀 Error fatal, reiniciando HLS");
                         hls.destroy();
                         iniciarHls();
                         break;
@@ -79,42 +83,85 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
         } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-            // Safari
             video.src = urlHls;
-            video.addEventListener("loadedmetadata", () => {
-                video.play();
-            });
-        } else {
-            console.error("⛔ El navegador no soporta HLS");
+            video.addEventListener("loadedmetadata", () => { video.play(); });
         }
     }
 
     iniciarHls();
 
     // ==============================
-    // CHAT GLOBAL EFÍMERO
+    // MODO RADIO
+    // ==============================
+    const radioOverlay = document.getElementById("radioOverlay");
+    const radioPauseBtn = document.getElementById("radioPauseBtn");
+    const radioMuteBtn = document.getElementById("radioMuteBtn");
+    const radioVolumeSlider = document.getElementById("radioVolumeSlider");
+
+    function aplicarModoRadio(activo) {
+        if (!radioOverlay) return;
+        if (activo) {
+            radioOverlay.classList.remove("oculto");
+        } else {
+            radioOverlay.classList.add("oculto");
+        }
+    }
+
+    if (radioPauseBtn) {
+        radioPauseBtn.addEventListener("click", () => {
+            if (video.paused) {
+                video.play();
+                radioPauseBtn.textContent = "⏸";
+            } else {
+                video.pause();
+                radioPauseBtn.textContent = "▶️";
+            }
+        });
+    }
+
+    if (radioMuteBtn) {
+        radioMuteBtn.addEventListener("click", () => {
+            video.muted = !video.muted;
+            radioMuteBtn.textContent = video.muted ? "🔈" : "🔇";
+        });
+    }
+
+    if (radioVolumeSlider) {
+        radioVolumeSlider.addEventListener("input", () => {
+            video.volume = parseFloat(radioVolumeSlider.value);
+        });
+    }
+
+    aplicarModoRadio(modoRadioInicial);
+
+    if (enVivo) {
+        setInterval(() => {
+            fetch("/estado/")
+                .then(r => r.json())
+                .then(data => aplicarModoRadio(data.modo_radio))
+                .catch(() => {});
+        }, 2000);
+    }
+
+    // ==============================
+    // CHAT
     // ==============================
     const mensajesChat = document.getElementById("chatMessages");
     const entradaChat = document.querySelector(".chat-input input");
     const botonChat = document.querySelector(".chat-input button");
-
-    // Modal elementos
     const modalNombre = document.getElementById("modalNombre");
     const inputNombreModal = document.getElementById("nombreUsuarioInput");
     const botonGuardarNombre = document.getElementById("guardarNombreBtn");
 
     if (mensajesChat && entradaChat && botonChat) {
         if (enVivo) {
-            // Chat vacío al iniciar transmisión
             mensajesChat.innerHTML = "";
-
             entradaChat.disabled = false;
             botonChat.disabled = false;
 
             function enviarMensaje() {
                 let nombreUsuario = localStorage.getItem("nombre_chat");
 
-                // Si no hay nombre, abrir modal
                 if (!nombreUsuario) {
                     modalNombre.classList.remove("oculto");
 
@@ -124,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             localStorage.setItem("nombre_chat", nombreIngresado);
                             modalNombre.classList.add("oculto");
                             inputNombreModal.value = "";
-                            enviarMensaje(); // reintentar envío
+                            enviarMensaje();
                         } else {
                             alert("⚠️ Debes ingresar un nombre para participar.");
                         }
@@ -134,7 +181,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     inputNombreModal.addEventListener("keydown", e => {
                         if (e.key === "Enter") guardarNombre();
                     });
-
                     return;
                 }
 
@@ -159,13 +205,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 entradaChat.value = "";
             }
 
-            // Click y Enter para enviar
             botonChat.addEventListener("click", enviarMensaje);
             entradaChat.addEventListener("keydown", e => {
                 if (e.key === "Enter") enviarMensaje();
             });
 
-            // Polling cada 2 segundos
             setInterval(() => {
                 fetch("/chat/obtener/").then(r => r.json()).then(data => {
                     if (!data.activo) {
@@ -206,7 +250,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         } else {
-            // Mostrar mensaje por defecto solo si está offline
             mensajesChat.innerHTML = `<div class="message system">📴 El chat está desactivado</div>`;
             entradaChat.disabled = true;
             botonChat.disabled = true;
@@ -218,9 +261,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // CLEANUP
     // ==============================
     window.addEventListener("beforeunload", () => {
-        if (hls) {
-            hls.destroy();
-            hls = null;
-        }
+        if (hls) { hls.destroy(); hls = null; }
     });
 });

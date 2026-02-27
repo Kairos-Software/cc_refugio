@@ -6,6 +6,7 @@ class CanalTransmision(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.DO_NOTHING)
     en_vivo = models.BooleanField(default=False)
     url_hls = models.CharField(max_length=255, blank=True)
+    modo_radio = models.BooleanField(default=False)  # ← solo agregar esto
 
     class Meta:
         managed = False

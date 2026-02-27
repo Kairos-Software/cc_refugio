@@ -6,4 +6,6 @@ urlpatterns = [
     path("", home, name="home"),
     path("chat/enviar/", views.enviar_mensaje, name="chat_enviar"),
     path("chat/obtener/", views.obtener_mensajes, name="chat_obtener"),
+
+    path("estado/", views.estado_stream, name="estado_stream"),
 ]
