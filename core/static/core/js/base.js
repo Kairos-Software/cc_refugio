@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const enVivo = contenedor.dataset.onAir === "true";
     const urlHls = contenedor.dataset.hlsUrl;
-    const modoRadioInicial = contenedor.dataset.modoRadio === "true";
 
     if (!urlHls) {
         console.warn("⛔ No hay URL HLS");
@@ -89,59 +88,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     iniciarHls();
-
-    // ==============================
-    // MODO RADIO
-    // ==============================
-    const radioOverlay = document.getElementById("radioOverlay");
-    const radioPauseBtn = document.getElementById("radioPauseBtn");
-    const radioMuteBtn = document.getElementById("radioMuteBtn");
-    const radioVolumeSlider = document.getElementById("radioVolumeSlider");
-
-    function aplicarModoRadio(activo) {
-        if (!radioOverlay) return;
-        if (activo) {
-            radioOverlay.classList.remove("oculto");
-        } else {
-            radioOverlay.classList.add("oculto");
-        }
-    }
-
-    if (radioPauseBtn) {
-        radioPauseBtn.addEventListener("click", () => {
-            if (video.paused) {
-                video.play();
-                radioPauseBtn.textContent = "⏸";
-            } else {
-                video.pause();
-                radioPauseBtn.textContent = "▶️";
-            }
-        });
-    }
-
-    if (radioMuteBtn) {
-        radioMuteBtn.addEventListener("click", () => {
-            video.muted = !video.muted;
-            radioMuteBtn.textContent = video.muted ? "🔈" : "🔇";
-        });
-    }
-
-    if (radioVolumeSlider) {
-        radioVolumeSlider.addEventListener("input", () => {
-            video.volume = parseFloat(radioVolumeSlider.value);
-        });
-    }
-
-    aplicarModoRadio(modoRadioInicial);
-
-    if (enVivo) {
-        setInterval(() => {
-            fetch("/estado/")
-                .then(r => r.json())
-                .then(data => aplicarModoRadio(data.modo_radio))
-                .catch(() => {});
-        }, 2000);
-    }
 
     // ==============================
     // CHAT

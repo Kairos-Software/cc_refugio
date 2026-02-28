@@ -22,8 +22,6 @@
     id="streamContainer"
     data-on-air="{{ on_air|yesno:'true,false' }}"
     data-hls-url="{{ hls_url }}"
-    data-modo-radio="{{ modo_radio|yesno:'true,false' }}"
-    data-radio-imagen="{% static 'core/img/radio_en_vivo.jpeg' %}"
 >
     <div class="player-card">
         <div class="status {% if on_air %}on-air{% endif %}">
@@ -34,28 +32,6 @@
         </div>
 
         <div class="video-wrapper" id="videoWrapper">
-
-            <!-- MODO RADIO: tapa el video completamente -->
-            <div id="radioOverlay" class="radio-overlay {% if not modo_radio %}oculto{% endif %}">
-                <img src="{% static 'core/img/radio_en_vivo.jpeg' %}"
-                     alt="Radio en Vivo"
-                     class="radio-imagen">
-                <div class="radio-controles">
-                    <button class="radio-btn" id="radioPauseBtn" title="Pausar/Reproducir">⏸</button>
-                    <span class="radio-label">📻 Radio en Vivo</span>
-                    <div class="radio-progress">
-                        <div class="radio-progress-bar"></div>
-                    </div>
-                    <div class="radio-volume">
-                        <span style="font-size:1rem; color:#fff;">🔊</span>
-                        <input type="range" class="radio-volume-slider" id="radioVolumeSlider"
-                               min="0" max="1" step="0.05" value="1">
-                    </div>
-                    <button class="radio-btn" id="radioMuteBtn" title="Mutear">🔇</button>
-                </div>
-            </div>
-
-            <!-- VIDEO NORMAL -->
             <video
                 id="videoPlayer"
                 class="video"
@@ -66,7 +42,6 @@
             >
                 Tu navegador no soporta video HTML5.
             </video>
-
         </div>
     </div>
 

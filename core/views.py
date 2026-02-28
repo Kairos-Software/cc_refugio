@@ -19,7 +19,6 @@ def home(request):
         "stream": stream,
         "on_air": stream.en_vivo if stream else False,
         "hls_url": hls_url,
-        "modo_radio": stream.modo_radio if stream else False,
     }
 
     return render(request, "core/home.html", context)
